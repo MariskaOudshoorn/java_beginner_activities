@@ -106,7 +106,8 @@ public class java_Roborally{
 	}
 
 	public void execute(){
-		for(int i = 0; toExecute.size()< i; i++){
+		int size = toExecute.size();
+		for(int i = 0; i < toExecute.size(); i++){
 			switch(toExecute.get(i)){
 				case "turnLeft" : executeTurnLeft();
 					break;
@@ -125,14 +126,16 @@ public class java_Roborally{
 	public static void main(String[] args){
 		java_Roborally roborally = new java_Roborally();
 		java_Roborally second_robot = new java_Roborally(0, 1, "North");
-		System.out.println("second robot turns twice: X " + second_robot.x + " Y " + second_robot.y + " facing " + second_robot.facing);
+		System.out.println("We create a 'second_robot', X: " + second_robot.x + " Y: " + second_robot.y + " facing: " + second_robot.facing);
+		System.out.println("second_robot.turnLeft();");
 		second_robot.turnLeft();
-		System.out.println(toExecute);
+		System.out.println("second_robot.turnLeft();");
 		second_robot.turnLeft();
-		System.out.println(toExecute);
-		second_robot.forward(0);
-		System.out.println(toExecute);
-		//System.out.println("X " + second_robot.x + " Y " + second_robot.y + " facing " + second_robot.facing);
+		System.out.println("second_robot.forward(2);");
+		second_robot.forward(2);
+		System.out.println("second_robot.turnRight();");
+		second_robot.turnRight();
+		System.out.println("second_robot.execute();");
 		second_robot.execute();
 		System.out.println("After execute: X " + second_robot.x + " Y " + second_robot.y + " facing " + second_robot.facing);
 

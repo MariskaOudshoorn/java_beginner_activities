@@ -33,8 +33,9 @@ public class java_Clock{
 				break; 
 		}
 
-		//storeNumber(numberArray);
-		enlargeNumber(numberArray);
+		storeNumber(numberArray);
+		printNumber(1);
+		//enlargeNumber(numberArray);
 	}
 
 	public void enlargeNumber(int[][] number){
@@ -60,16 +61,22 @@ public class java_Clock{
 				}
 			}
 		}
+		//for(int i = 0; i < 50; i++){
+		//	System.out.print(stringStored3[i]);
+		//}
+
 		for(int i = 0; i < 50; i++){
 			if(i % 10 == 0){
 				System.out.println();
 			}
 			System.out.print(stringStored3[i]);
 		}
+		
 
 	}
-
-	/* public void storeNumber(int[][] array){
+	
+	
+	public void storeNumber(int[][] array){
 		String[] symbols = new String[]{" ","_","|"};
 		for(int j = 0; j < 5; j++){
 			for(int i = 0; i < 5; i++){
@@ -88,7 +95,9 @@ public class java_Clock{
 		}
 		storei += 5;
 	}
+	
 
+	
 	public void printNumber(int size){
 		for(int j = 0; j < 5; j++){
 			for(int i = 0; i < storei; i++){
@@ -111,7 +120,8 @@ public class java_Clock{
 			}
 		}
 	}
-
+	
+	/*
 	public void printNumber(int[][] array, int size){
 		String[] symbols = new String[]{" ","_","|"};
 		if(size == 1){
@@ -236,10 +246,11 @@ public class java_Clock{
 		int hr1 = hours/10;
 		int hr2 = hours%10;
 		//chooseNumber(hr1);
-		chooseNumber(hr2);
+		//chooseNumber(hr2);
 		//chooseNumber(min1);
 		//chooseNumber(min2);
 		//printNumber(size);
+		chooseNumber(3);
 	}
 
 	public static void main(String[] args) {
