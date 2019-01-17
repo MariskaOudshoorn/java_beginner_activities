@@ -23,11 +23,7 @@ public class DecisionTree{
 
 	public void processFile(String incomingLine){
 		ArrayList<String> newLine = new ArrayList<String>(Arrays.asList(incomingLine.split(", ")));
-		String name;
-		String question;
-		String origin;
-		String destination;
-		String answer;
+		String name, question, origin, destination, answer;
 		if(newLine.size() == 2){
 			name = newLine.get(0);
 			question = newLine.get(1);
@@ -43,14 +39,11 @@ public class DecisionTree{
 		}
 	}
 
-	public String findNextNode(String currentNode, String answer){
+	public String findNextNode(String currentnode, String yesno){
 		String nextNode = "None";
 		for(int i = 0; i < edges.size(); i++){
-			if(currentNode.equals(edges.get(i).origin)){
-				if(answer.equals("Nee")){
+			if((currentnode.equals(edges.get(i).origin)) && (yesno.equals(edges.get(i).answer))){
 					nextNode = edges.get(i).destination;
-					//Verschil maken in nextnode voor antwoord ja of nee. 
-				}
 			}
 		}
 		return nextNode;
@@ -58,7 +51,20 @@ public class DecisionTree{
 
 	public String userInput(){
 		Scanner input = new Scanner(System.in);
-		String answer = input.nextLine();
+		Boolean goodAnswer = false;
+		String answer = "None";
+		while(!goodAnswer){
+			System.out.println("Antwoord met Ja of Nee.");
+			answer = input.nextLine();
+			if((answer.equals("ja")) || (answer.equals("Ja"))){
+				answer = "Ja";
+				goodAnswer = true;
+			}
+			else if((answer.equals("nee")) || (answer.equals("Nee"))){
+				answer = "Nee";
+				goodAnswer = true;
+			}
+		}
 		return answer;
 	}
 
@@ -77,20 +83,47 @@ public class DecisionTree{
 			counter = 0;
 		}
 		return firstNode;
-
-		// De naam van de node die niet in de destinationlijst voorkomt. 
 	}
 
-	public void checkThings(){
+	public int getNodeIndex(String currentnode){
+		int nodeIndex = 0;
+		for(int i = 0; i < nodes.size(); i++){
+			if(currentnode.equals(nodes.get(i).name)){
+				nodeIndex = i;
+			}
+		}
+		return nodeIndex;
+	}
 
+	public Boolean endNode(String currentnode){
+		Boolean thisIsLastNode = true;
+		for(int i = 0; i < edges.size(); i++){
+			if(currentnode.equals(edges.get(i).origin)){
+				thisIsLastNode = false;
+			}
+		}
+		return thisIsLastNode;
+	}
+
+	public void runTree(){
+		readFile();
+		String currentnode,answer;
+		currentnode = findFirstNode();
+		int nodeIndex = 0;
+		do{
+			nodeIndex = getNodeIndex(currentnode);
+			System.out.println(nodes.get(nodeIndex).question);
+			if(endNode(currentnode)){
+				break;
+			}
+			answer = userInput();
+			currentnode = findNextNode(currentnode, answer);
+		}while(!currentnode.equals("None"));
+		System.out.println("Je bent bij het einde van de boom, als het goed is weet je nu van welke boom dit blad komt.");
 	}
 
 	public static void main(String[] args) {
 		DecisionTree tree = new DecisionTree();
-		tree.readFile();
-		String firstnode = "none";
-		firstnode = tree.findFirstNode();
-		String nextnode = tree.findNextNode(firstnode, Nee);
-		System.out.println(nextnode);
+		tree.runTree();
 	}
 }
