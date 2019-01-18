@@ -1,5 +1,5 @@
 //000001234000001234000001234000001234000001234000001234000001234000001234000001234
-//120001234210001234340001234430001234560001234650001234780001234870001234990001234
+//120001234210001234340001234430001234560001234650001234780001234870001234990001234  two columns
 //123004564456007894789001234430001234560001234650001234780001234870001234990001234  singleblock
 //123456789123456789123456789123456789123456789123456789987654321987654321987654321  allrows
 //123456789234567891345678912456789123567891234678912345789123456891234567912345678  allcolumns
@@ -9,7 +9,7 @@
 import java.util.*;
 
 public class SudokuSolver{
-		ArrayList<Integer> givenToSolveList = new ArrayList<>();
+		ArrayList<Integer> originalSudoku = new ArrayList<>();
 		ArrayList<Integer> solvingList = new ArrayList<>();
 
 	public void playerInput(){
@@ -18,15 +18,15 @@ public class SudokuSolver{
 		String temporaryInput = input.nextLine();
 		for(int i = 0; i < temporaryInput.length(); i++){
 			int number = Character.digit(temporaryInput.charAt(i), 10);
-			givenToSolveList.add(number);
+			originalSudoku.add(number);
 		}
 	}
 
 	public void displayOriginalGrid(){
-		for(int i = 0; i < givenToSolveList.size(); i+=9){
+		for(int i = 0; i < originalSudoku.size(); i+=9){
 			System.out.println("-------------------");
 			for(int j = 0; j < 9; j++){
-				System.out.print("|" + givenToSolveList.get(i+j));
+				System.out.print("|" + originalSudoku.get(i+j));
 			}
 			System.out.println("|");
 		}
@@ -68,6 +68,20 @@ public class SudokuSolver{
 		return true;
 	}
 
+	public Boolean numberNotInRow(int indexNumber, int chosenNumber){
+		int rowNumber = indexNumber / 9;
+		ArrayList<Integer> alreadyInRow = new ArrayList<>(); 
+		for(int i = rowNumber * 9; i < (rowNumber * 9) + 9; i++){
+			if(solvingList.get(i) != 0){
+				alreadyInRow.add(solvingList.get(i));
+			}
+		}
+		if((alreadyInRow.contains(originalSudoku.get(indexNumber))) || (alreadyInRow.contains(chosenNumber))){
+			return false;
+		}
+		return true;
+	}
+
 	public Boolean checkSingleColumn(int columntocheck){
 		int sumOfColumn = 0;
 		for(int i = 0; i < 9; i++){
@@ -88,6 +102,20 @@ public class SudokuSolver{
 			if(!checkSingleColumn(i)){
 				return false;
 			}
+		}
+		return true;
+	}
+
+	public boolean numberNotInColumn(int indexNumber, int chosenNumber){
+		int columnNumber = indexNumber % 9;
+		ArrayList<Integer> alreadyInRow = new ArrayList<>(); 
+		for(int i = 0 + columnNumber; i < (9 * 8) + columnNumber; i += 9){
+			if(solvingList.get(i) != 0){
+				alreadyInRow.add(solvingList.get(i));
+			}
+		}
+		if((alreadyInRow.contains(originalSudoku.get(indexNumber))) || (alreadyInRow.contains(chosenNumber))){
+			return false;
 		}
 		return true;
 	}
@@ -121,6 +149,43 @@ public class SudokuSolver{
 		return true;
 	}
 
+	public Boolean numberNotInBox(int indexNumber, int chosenNumber){
+		int currentLocation = whichBoxIsThis(indexNumber);
+		
+	}
+
+	public int whichBoxIsThis(int indexNumber){
+		int topLeftOfBox = -1;
+		if((indexNumber < 3) || ((indexNumber >= 9) && (indexNumber < 12)) || ((indexNumber >= 18 && indexNumber < 21))){
+			topLeftOfBox = 0;
+		}
+		else if(((indexNumber >= 3) && (indexNumber < 6)) || ((indexNumber >= 12) && (indexNumber < 14)) || ((indexNumber >= 21 && indexNumber < 23))){
+			topLeftOfBox = 3;
+		}
+		else if(((indexNumber >= 6) && (indexNumber < 9)) || ((indexNumber >= 15) && (indexNumber < 17)) || ((indexNumber >= 24 && indexNumber < 28))){
+			topLeftOfBox = 6;
+		}
+		else if(((indexNumber >= 27) && (indexNumber < 30)) || ((indexNumber >= 36) && (indexNumber < 39)) || ((indexNumber >= 45 && indexNumber < 48))){
+			topLeftOfBox = 27;
+		}
+		else if(((indexNumber >= 30) && (indexNumber < 33)) || ((indexNumber >= 39) && (indexNumber < 42)) || ((indexNumber >= 48 && indexNumber < 51))){
+			topLeftOfBox = 30;
+		}
+		else if(((indexNumber >= 33) && (indexNumber < 36)) || ((indexNumber >= 42) && (indexNumber < 45)) || ((indexNumber >= 51 && indexNumber < 54))){
+			topLeftOfBox = 33;
+		}
+		else if(((indexNumber >= 54) && (indexNumber < 57)) || ((indexNumber >= 63) && (indexNumber < 66)) || ((indexNumber >= 72 && indexNumber < 75))){
+			topLeftOfBox = 54;
+		}
+		else if(((indexNumber >= 57) && (indexNumber < 60)) || ((indexNumber >= 66) && (indexNumber < 69)) || ((indexNumber >= 75 && indexNumber < 78))){
+			topLeftOfBox = 57;
+		}
+		else if(((indexNumber >= 60) && (indexNumber < 63)) || ((indexNumber >= 69) && (indexNumber < 72)) || ((indexNumber >= 78 && indexNumber < 81))){
+			topLeftOfBox = 60;
+		}
+		return topLeftOfBox;
+	}
+
 	public Boolean checkFullSudoku(){
 		if(checkAllRows() && checkAllColumns() && checkAllBoxes()){
 			return true;
@@ -130,46 +195,72 @@ public class SudokuSolver{
 		}
 	}
 
-	public void copyGivenToSolve(){
-		ArrayList<Integer> tempList = new ArrayList<Integer>(givenToSolveList);
+	public void copyOriginalToSolveList(){
+		ArrayList<Integer> tempList = new ArrayList<Integer>(originalSudoku);
 		solvingList.addAll(tempList);
-
 	}
 
-	public void solveColumn(){
-		ArrayList<Integer> numbersAlreadyInRow = new ArrayList<>();
-		for(int i = 0; i < 9; i++){
-			if(givenToSolveList.get(i) != 0){
-				numbersAlreadyInRow.add(givenToSolveList.get(i));
+	public Boolean noZeroesLeft(){
+		for(int i = 0; i < solvingList.size(); i++){
+			if(solvingList.contains(0)){
+				return false;
 			}
 		}
-		for(int i = 0; i < numbersAlreadyInRow.size(); i++){
-			System.out.println(numbersAlreadyInRow.get(i));
-		}
-		for(int i = 0; i < 9; i++){
-			if(givenToSolveList.get(i) == 0){
-				for(int j = 0; j < 9; j++){
-					if(!numbersAlreadyInRow.contains(j)){
-						solvingList.set(i, j);
-						numbersAlreadyInRow.add(solvingList.get(i));
-					}
+		return true;
+	}
+
+	public void solveSudoku(){
+		int check1 = 1;
+		int check2 = 2;
+		int check3 = 3;
+		int check4 = 4;
+		int check5 = 5;
+		int check6 = 6;
+		int check7 = 7;
+		int check8 = 8;
+		int check9 = 9;
+		for(int i = 0; i < originalSudoku.size(); i++){
+			if((solvingList.get(i).equals(0))  || (!originalSudoku.get(i).equals(solvingList.get(i)))){
+				if((numberNotInRow(i, check1)) && (numberNotInColumn(i, check1))){
+					solvingList.set(i, check1);
+				}
+				else if((numberNotInRow(i, check2)) && (numberNotInColumn(i, check2))){
+					solvingList.set(i, check2);
+				}
+				else if((numberNotInRow(i, check3)) && (numberNotInColumn(i, check3))){
+					solvingList.set(i, check3);
+				}
+				else if((numberNotInRow(i, check4)) && (numberNotInColumn(i, check4))){
+					solvingList.set(i, check4);
+				}
+				else if((numberNotInRow(i, check5)) && (numberNotInColumn(i, check5))){
+					solvingList.set(i, check5);
+				}
+				else if((numberNotInRow(i, check6)) && (numberNotInColumn(i, check6))){
+					solvingList.set(i, check6);
+				}
+				else if((numberNotInRow(i, check7)) && (numberNotInColumn(i, check7))){
+					solvingList.set(i, check7);
+				}
+				else if((numberNotInRow(i, check8)) && (numberNotInColumn(i, check8))){
+					solvingList.set(i, check8);
+				}
+				else if((numberNotInRow(i, check9)) && (numberNotInColumn(i, check9))){
+					solvingList.set(i, check9);
+				}
+				else{
+					solvingList.set(i, 0);
 				}
 			}
 		}
-		for(int i = 0; i < numbersAlreadyInRow.size(); i++){
-			System.out.println(numbersAlreadyInRow.get(i));
-		}
-
-	}
+	} 
 
 	public static void main(String[] args){
 		SudokuSolver solver = new SudokuSolver();
 		solver.playerInput();
 		solver.displayOriginalGrid();
-		solver.copyGivenToSolve();
-		solver.solveColumn();
+		solver.copyOriginalToSolveList();
+		solver.solveSudoku();
 		solver.displaySolvingGrid();
-		
-		
 	}
 }
