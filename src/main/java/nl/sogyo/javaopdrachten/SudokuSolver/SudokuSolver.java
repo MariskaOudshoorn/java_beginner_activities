@@ -8,6 +8,8 @@
 //000000000000000000000000000000000000000000000000000000000000000000000000000000000
 //152489076739256841468371295387120659591763428246095713914637582625948107873512960  partial sudoku
 //000820090500000000308040007100000040006402503000090010093004000004035200000700900  given sudoku
+//000251097000097000007600200360010078015908362978002415046103089103080000700546100  partial sudoku difficulty ** no 71.
+//408057000250010408000400000000070106000000300196000005004723061703901500001000023  partial sudoku difficulty *** no 71
 
 import java.util.*;
 
@@ -235,18 +237,26 @@ public class SudokuSolver{
 
 	public void fillPossibleList(){
 		for(int i = 0; i < solvingList.size(); i++){
+			for(int j = 0; j < 9; j++){
+				possibleList[i][j] = 0;
+			}
+		}
+		for(int i = 0; i < solvingList.size(); i++){
 			for(int j = 1; j < 10; j++){
 				if(numberNotInRow(i, j) && numberNotInColumn(i, j) && numberNotInBox(i, j)){
 					possibleList[i][j-1] = j;
 				}
 			}
-			/* System.out.println("Next index");
+			
+			/*System.out.println("Next index");
 			for(int j = 0; j < 9; j++){
 				System.out.println(possibleList[i][j]);
-			}	
+			}
 			*/
+			
+			
 		}
-	}
+	} // Contains code that will be obsolete
 
 	public Integer singlePossible(int indexNumber){
 		int onlyOne = 0;
@@ -258,6 +268,7 @@ public class SudokuSolver{
 				return 0;
 			}
 		}
+		//System.out.println("index: " + indexNumber + "Possibility " + onlyOne);
 		return onlyOne;
 	}
 
@@ -268,83 +279,185 @@ public class SudokuSolver{
 				counter++;
 			}
 		}
+		System.out.println("The possible amount is " + counter);
 		return counter;
 	}
 
-	public void possibleLengthTwo(int number){
+	public boolean possibleRowLengthTwo(int indexNumber){
+		System.out.println("Going to check for two!");
+		int rowNumber = indexNumber / 9;
+		int startNumber = rowNumber * 9;
 		int twoCounter = 0;
+		boolean didItHappen = false;
 		ArrayList<Integer> indexKeeper = new ArrayList<>();
-		for(int i = 0; i < 9; i++){ //checks entire row! 
+		for(int i = startNumber; i < (startNumber + 9); i++){
+			System.out.println("Indexnumber is " + i);
 			if(givePossibleLength(i) == 2){
 				twoCounter++;
-				indexKeeper.add(i)
+				System.out.println("twocounter is: " + twoCounter);
+				indexKeeper.add(i);
 			}
 		}
 		if(twoCounter == 2){
-			int[] arrayOne = new int[9];
-			int[] arrayTwo = new int[9];
+			int[] arrayOne = new int[2];
+			int[] arrayTwo = new int[2];
 			int indexOne = indexKeeper.get(0);
 			int indexTwo = indexKeeper.get(1);
-			for(int i = 0; i < 9; i++){
+			for(int i = 0; i < 2; i++){
 				arrayOne[i] = possibleList[indexOne][i];
 				arrayTwo[i] = possibleList[indexTwo][i];
 			}
-			if(Arrays.equals(arrayOne, arrayTwo)); //skip...
-			//If two places with two options compare two options if they differ enter the number with which they differ. 
+			if(Arrays.equals(arrayOne, arrayTwo));
+			else if(arrayOne[0] == arrayTwo[0]){
+				solvingList.set(indexOne, arrayOne[1]);
+				solvingList.set(indexTwo, arrayTwo[1]);
+				System.out.println("I placed two");
+				didItHappen = true;
+			}
+			else if(arrayOne[1] == arrayTwo[1]){
+				solvingList.set(indexOne, arrayOne[0]);
+				solvingList.set(indexTwo, arrayTwo[0]);
+				System.out.println("I placed two");
+				didItHappen = true;
+			}
+			else if(arrayOne[0] == arrayTwo[1]){
+				solvingList.set(indexOne, arrayOne[1]);
+				solvingList.set(indexTwo, arrayTwo[0]);
+				System.out.println("I placed two");
+				didItHappen = true;
+			}
+			else if(arrayOne[1] == arrayTwo[0]){
+				solvingList.set(indexOne, arrayOne[0]);
+				solvingList.set(indexTwo, arrayTwo[1]);
+				System.out.println("I placed two");
+				didItHappen = true;
+			}
+		}
+		return didItHappen;
+	}
 
+	public void uniqueInBox(int indexNumber){
+		int count1 = 0;
+		int count2 = 0;
+		int count3 = 0;
+		int count4 = 0;
+		int count5 = 0;
+		int count6 = 0;
+		int count7 = 0;
+		int count8 = 0;
+		int count9 = 0;
+		int oneIndex = 0;
+		int twoIndex = 0;
+		int threeIndex = 0;
+		int fourIndex = 0;
+		int fiveIndex = 0;
+		int sixIndex = 0;
+		int sevenIndex = 0;
+		int eightIndex = 0;
+		int nineIndex = 0;
+
+		int topLeftOfBox = whichBoxIsThis(indexNumber);
+		for( int i = 0; i < 3; i++){
+			for(int j = 0; j < 3; j++){
+				if(possibleList[topLeftOfBox + j][0] == 1){
+					count1++;
+					oneIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][1] == 2){
+					count2++;
+					twoIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][2] == 3){
+					count3++;
+					threeIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][3] == 4){
+					count4++;
+					fourIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][4] == 5){
+					count5++;
+					fiveIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][5] == 6){
+					count6++;
+					sixIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][6] == 7){
+					count7++;
+					sevenIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][7] == 8){
+					count8++;
+					eightIndex = i+j;
+				}
+				else if(possibleList[topLeftOfBox + j][8] == 9){
+					count9++;
+					nineIndex = i+j;
+				}
+			}
+			topLeftOfBox += 9;
+		}
+		if(count1 == 1){
+			solvingList.set(oneIndex, 1);
+		}
+		if(count2 == 1){
+			solvingList.set(twoIndex, 2);
+		}
+		if(count3 == 1){
+			solvingList.set(threeIndex, 3);
+		}
+		if(count4 == 1){
+			solvingList.set(fourIndex, 4);
+		}
+		if(count5 == 1){
+			solvingList.set(fiveIndex, 5);
+		}
+		if(count6 == 1){
+			solvingList.set(sixIndex, 6);
+		}
+		if(count7 == 1){
+			solvingList.set(sevenIndex, 7);
+		}
+		if(count8 == 1){
+			solvingList.set(eightIndex, 8);
+		}
+		if(count9 == 1){
+			solvingList.set(nineIndex, 9);
 		}
 	}
 
-	public void oldSolveSudoku(){
-		int check1 = 1;
-		int check2 = 2;
-		int check3 = 3;
-		int check4 = 4;
-		int check5 = 5;
-		int check6 = 6;
-		int check7 = 7;
-		int check8 = 8;
-		int check9 = 9;
-		for(int i = 0; i < originalSudoku.size(); i++){
-			if((solvingList.get(i).equals(0))  || (!originalSudoku.get(i).equals(solvingList.get(i)))){
-				if((numberNotInRow(i, check1)) && (numberNotInColumn(i, check1)) && (numberNotInBox(i, check1))){
-					solvingList.set(i, check1);
-				}
-				else if((numberNotInRow(i, check2)) && (numberNotInColumn(i, check2)) && (numberNotInBox(i, check2))){
-					solvingList.set(i, check2);
-				}
-				else if((numberNotInRow(i, check3)) && (numberNotInColumn(i, check3)) && (numberNotInBox(i, check3))){
-					solvingList.set(i, check3);
-				}
-				else if((numberNotInRow(i, check4)) && (numberNotInColumn(i, check4)) && (numberNotInBox(i, check4))){
-					solvingList.set(i, check4);
-				}
-				else if((numberNotInRow(i, check5)) && (numberNotInColumn(i, check5)) && (numberNotInBox(i, check5))){
-					solvingList.set(i, check5);
-				}
-				else if((numberNotInRow(i, check6)) && (numberNotInColumn(i, check6)) && (numberNotInBox(i, check6))){
-					solvingList.set(i, check6);
-				}
-				else if((numberNotInRow(i, check7)) && (numberNotInColumn(i, check7)) && (numberNotInBox(i, check7))){
-					solvingList.set(i, check7);
-				}
-				else if((numberNotInRow(i, check8)) && (numberNotInColumn(i, check8)) && (numberNotInBox(i, check8))){
-					solvingList.set(i, check8);
-				}
-				else if((numberNotInRow(i, check9)) && (numberNotInColumn(i, check9)) && (numberNotInBox(i, check9))){
-					solvingList.set(i, check9);
-				}
-			}
-		} // possibly eventually outdated
-	}
 
 	public void solveSudoku(){
-		for(int i = 0; i < originalSudoku.size(); i++){
-			if((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))){
-				if(singlePossible(i) != 0){
-					int solution = singlePossible(i);
-					solvingList.set(i, solution);
+		boolean quit = false;
+		int singleCounter = 0;
+		int checkCounter = 0;
+		fillPossibleList();
+		while(!quit) {
+			for (int i = 0; i < solvingList.size(); i++) {
+				singleCounter = 0;
+				if ((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))) {
+					if (singlePossible(i) != 0) {
+						int solution = singlePossible(i);
+						solvingList.set(i, solution);
+						fillPossibleList();
+						singleCounter = 1;
+						checkCounter = 0;
+					}
 				}
+			}
+			if(singleCounter == 0){
+				checkCounter ++;
+			}
+			for (int i = 0; i < solvingList.size(); i += 3) {
+				if ((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))) {
+					uniqueInBox(i);
+					fillPossibleList();
+					// iets overschrijfet het origineel
+				}
+			}
+			if( checkCounter == 2){
+				quit = true;
 			}
 		}
 	}
