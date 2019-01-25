@@ -223,15 +223,6 @@ public class SudokuSolver{
 		solvingList.addAll(tempList);
 	}
 
-	public Boolean noZeroesLeft(){
-		for(int i = 0; i < solvingList.size(); i++){
-			if(solvingList.contains(0)){
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public void fillPossibleList(){
 		for(int i = 0; i < solvingList.size(); i++){
 			for(int j = 0; j < 9; j++){
@@ -240,19 +231,12 @@ public class SudokuSolver{
 		}
 		for(int i = 0; i < solvingList.size(); i++){
 			for(int j = 1; j < 10; j++){
-				if(numberNotInRow(i, j) && numberNotInColumn(i, j) && numberNotInBox(i, j)){
+				if(numberNotInRow(i, j) && numberNotInColumn(i, j) && numberNotInBox(i, j) && (solvingList.get(i) == 0)){
 					possibleList[i][j-1] = j;
 				}
 			}
-
-			/*
-			System.out.println("Next index");
-			for(int j = 0; j < 9; j++){
-				System.out.println(possibleList[i][j]);
-			}
-			*/
 		}
-	} // Contains code that will be obsolete
+	}
 
 	public Integer singlePossible(int indexNumber){
 		int onlyOne = 0;
@@ -277,97 +261,6 @@ public class SudokuSolver{
 		}
 		System.out.println("The possible amount is " + counter);
 		return counter;
-	}
-
-	public void uniqueInBox(int indexNumber){
-		int count1 = 0;
-		int count2 = 0;
-		int count3 = 0;
-		int count4 = 0;
-		int count5 = 0;
-		int count6 = 0;
-		int count7 = 0;
-		int count8 = 0;
-		int count9 = 0;
-		int oneIndex = 0;
-		int twoIndex = 0;
-		int threeIndex = 0;
-		int fourIndex = 0;
-		int fiveIndex = 0;
-		int sixIndex = 0;
-		int sevenIndex = 0;
-		int eightIndex = 0;
-		int nineIndex = 0;
-
-		int topLeftOfBox = whichBoxIsThis(indexNumber);
-		for( int i = 0; i < 3; i++){
-			for(int j = 0; j < 3; j++){
-				if(possibleList[topLeftOfBox + j][0] == 1){
-					count1++;
-					oneIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][1] == 2){
-					count2++;
-					twoIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][2] == 3){
-					count3++;
-					threeIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][3] == 4){
-					count4++;
-					fourIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][4] == 5){
-					count5++;
-					fiveIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][5] == 6){
-					count6++;
-					sixIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][6] == 7){
-					count7++;
-					sevenIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][7] == 8){
-					count8++;
-					eightIndex = i+j;
-				}
-				else if(possibleList[topLeftOfBox + j][8] == 9){
-					count9++;
-					nineIndex = i+j;
-				}
-			}
-			topLeftOfBox += 9;
-		}
-		if((count1 == 1) && (!originalSudoku.get(oneIndex).equals(solvingList.get(oneIndex)))){
-			solvingList.set(oneIndex, 1);
-		}
-		if((count2 == 1) && (!originalSudoku.get(twoIndex).equals(solvingList.get(twoIndex)))){
-			solvingList.set(twoIndex, 2);
-		}
-		if((count3 == 1) && (!originalSudoku.get(threeIndex).equals(solvingList.get(threeIndex)))){
-			solvingList.set(threeIndex, 3);
-		}
-		if((count4 == 1) && (!originalSudoku.get(fourIndex).equals(solvingList.get(fourIndex)))){
-			solvingList.set(fourIndex, 4);
-		}
-		if((count5 == 1) && (!originalSudoku.get(fiveIndex).equals(solvingList.get(fiveIndex)))){
-			solvingList.set(fiveIndex, 5);
-		}
-		if((count6 == 1) && (!originalSudoku.get(sixIndex).equals(solvingList.get(sixIndex)))){
-			solvingList.set(sixIndex, 6);
-		}
-		if((count7 == 1) && (!originalSudoku.get(sixIndex).equals(solvingList.get(sixIndex)))){
-			solvingList.set(sevenIndex, 7);
-		}
-		if((count8 == 1) && (!originalSudoku.get(sevenIndex).equals(solvingList.get(sevenIndex)))){
-			solvingList.set(eightIndex, 8);
-		}
-		if((count9 == 1) && (!originalSudoku.get(nineIndex).equals(solvingList.get(nineIndex)))){
-			solvingList.set(nineIndex, 9);
-		}
 	}
 
 	public ArrayList<Integer> returnUniquelist(int indexNumber, int compareIndex){
@@ -397,7 +290,7 @@ public class SudokuSolver{
 			uniqueCounter = 0;
 			if(possibleList[indexNumber][i] != 0) {
 				for (int j = (rowNumber * 9); j < ((rowNumber * 9) + 9); j++) {
-					if (solvingList.get(j) == 0 && (indexNumber != j)) { // overschrijft somehow de singlesolve functie
+					if (solvingList.get(j) == 0 && (indexNumber != j)) {
 						if (possibleList[indexNumber][i] == possibleList[j][i]) {
 							continue nextIndex;
 						} else {
@@ -414,134 +307,160 @@ public class SudokuSolver{
 		}
 		return 0;
 	}
-	/*
-	public Integer uniqueForRow(int indexNumber){
-		int rowNumber = indexNumber / 9;
-		ArrayList<Integer> singlePossibleList = new ArrayList<>();
-		for(int i = (rowNumber * 9); i < ((rowNumber*9) + 9); i++){
-			ArrayList<Integer> uniqueList;
-			uniqueList = returnUniquelist(indexNumber, i);
-			if(uniqueList.size() == 1){
-				if(singlePossibleList.size() == 0 ) {
-					singlePossibleList.add(uniqueList.get(0));
-				}
-				else if(!uniqueList.get(0).equals(singlePossibleList.get(0))){
-					singlePossibleList.add(uniqueList.get(0));
-				}
-			}
-		}
-		if(singlePossibleList.size() == 1){
-			for(int i = rowNumber*9; i < ((rowNumber * 9) + 9); i++ ) {
-				if (i != indexNumber) {
-					for (int j = 0; j < 9; j++) {
-						if (possibleList[i][j] == singlePossibleList.get(0)) {
-							return 0;
-						}
-					}
-				}
-			}
-		}
-		if(singlePossibleList.size() == 0){
-			return 0;
-		}
-		else {
-			return singlePossibleList.get(0);
-		}
-	}
-	*/
 
 	public Integer uniqueForColumn(int indexNumber){
 		int columnNumber = indexNumber % 9;
-		ArrayList<Integer> singlePossibleList = new ArrayList<>();
-		for(int i = columnNumber; i < (9 * 9) + columnNumber; i += 9){
-			ArrayList<Integer> uniqueList;
-			uniqueList = returnUniquelist(indexNumber, i);
-			if(uniqueList.size() == 1){
-				if(singlePossibleList.size() == 0 ) {
-					singlePossibleList.add(uniqueList.get(0));
-				}
-				else if(!uniqueList.get(0).equals(singlePossibleList.get(0))){
-					singlePossibleList.add(uniqueList.get(0));
+		int uniqueCounter;
+		nextIndex: for(int i = 0; i < 9; i++){
+			uniqueCounter = 0;
+			if(possibleList[indexNumber][i] != 0) {
+				for (int j = columnNumber; j < (9 * 9) + columnNumber; j += 9) {
+					if (solvingList.get(j) == 0 && (indexNumber != j)) {
+						if (possibleList[indexNumber][i] == possibleList[j][i]) {
+							continue nextIndex;
+						} else {
+							uniqueCounter++;
+						}
+					} else {
+						uniqueCounter++;
+					}
 				}
 			}
+			if( uniqueCounter == 9){
+				return (i + 1) ;
+			}
 		}
-		if(singlePossibleList.size() == 1) {
-			for (int i = columnNumber; i < (9 * 9) + columnNumber; i += 9) {
-				if (i != indexNumber) {
-					for (int j = 0; j < 9; j++) {
-						if (possibleList[i][j] == singlePossibleList.get(0)) {
-							return 0;
+		return 0;
+	}
 
+	public Integer uniqueForBox(int indexNumber){
+		int currentLocation = whichBoxIsThis(indexNumber);
+		int uniqueCounter;
+		nextIndex: for(int i = 0; i < 9; i++){
+			uniqueCounter = 0;
+			if(possibleList[indexNumber][i] != 0) {
+				for (int j = currentLocation; j < (currentLocation + 27); j+= 9) {
+					for(int k = 0; k < 3; k++) {
+						if (solvingList.get(currentLocation + k) == 0 && (indexNumber != (currentLocation + k))) {
+							if (possibleList[indexNumber][i] == possibleList[(currentLocation + k)][i]) {
+								continue nextIndex;
+							} else {
+								uniqueCounter++;
+							}
+						} else {
+							uniqueCounter++;
 						}
 					}
 				}
 			}
+			if( uniqueCounter == 9){
+				return (i + 1) ;
+			}
 		}
-		if(singlePossibleList.size() == 0){
-			return 0;
-		}
-		else {
-			return singlePossibleList.get(0);
+		return 0;
+	}
+
+	public void singleSolve(){
+		int singleCounter = 0;
+		int checkCounter = 0;
+		boolean singleSolved = false;
+		while(!singleSolved) {
+			for (int i = 0; i < solvingList.size(); i++) {
+				singleCounter = 0;
+				if ((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))) {
+					if (singlePossible(i) != 0) {
+						int solution = singlePossible(i);
+						solvingList.set(i, solution);
+						fillPossibleList();
+						singleCounter = 1;
+						checkCounter = 0;
+					}
+				}
+			}
+			if (singleCounter == 0) {
+				checkCounter++;
+			}
+			if (checkCounter == 2){
+				singleSolved = true;
+			}
 		}
 	}
 
 	public void fillUnique(){
-		for (int i = 0; i < solvingList.size(); i++) {
-			if ((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))) {
-				if ((i) != 0) {
-					int solution = uniqueForRow(i);
-					solvingList.set(i, solution);
-					fillPossibleList();
+		boolean noUniquesLeft = false;
+		boolean	rowsDone;
+		boolean columnsDone;
+		boolean boxDone;
+		while(!noUniquesLeft) {
+			rowsDone = false;
+			columnsDone = false;
+			boxDone = false;
+			for (int i = 0; i < solvingList.size(); i++) {
+				if ((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))) {
+					int solutionRow = uniqueForRow(i);
+					if (solutionRow != 0) {
+						solvingList.set(i, solutionRow);
+						fillPossibleList();
+						rowsDone = true;
+					}
+					else if (uniqueForColumn(i) != 0) {
+						int solution = uniqueForColumn(i);
+						solvingList.set(i, solution);
+						fillPossibleList();
+						columnsDone = true;
+					}
+					/*
+					else if (uniqueForBox(i) != 0) {
+						int solution = uniqueForBox(i);
+						solvingList.set(i, solution);
+						fillPossibleList();
+						boxDone = true;
+					}
+					*/
+
 				}
-				/*
-				if (uniqueForColumn(i) != 0) {
-					int solution = uniqueForColumn(i);
-					solvingList.set(i, solution);
-					fillPossibleList();
-				}
-				*/
+			}
+			noUniquesLeft = true;
+			if(rowsDone || columnsDone || boxDone){
+				noUniquesLeft = false;
 			}
 		}
 	}
 
+	public boolean recursiveRemainder(){
+		for(int i = 0; i < solvingList.size(); i++){
+			if(solvingList.get(i) == 0){
+				for(int j = 1; j < 10; j++){
+					if((numberNotInRow(i, j)) && (numberNotInColumn(i , j)) && (numberNotInBox(i, j))){
+						solvingList.set(i, j);
+						if(recursiveRemainder()) {
+							return true;
+						}
+					}
+					solvingList.set(i, 0);
+				}
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void solveSudoku(){
 		boolean quit = false;
-		int singleCounter = 0;
-		int checkCounter = 0;
 		int checkUnique = 0;
 		fillPossibleList();
 		while(!quit) {
-			boolean singleSolved = false;
-			while(!singleSolved) {
-				for (int i = 0; i < solvingList.size(); i++) {
-					singleCounter = 0;
-					if ((solvingList.get(i).equals(0)) || (!originalSudoku.get(i).equals(solvingList.get(i)))) {
-						if (singlePossible(i) != 0) {
-							int solution = singlePossible(i);
-							solvingList.set(i, solution);
-							fillPossibleList();
-							singleCounter = 1;
-							checkCounter = 0;
-						}
-					}
-				}
-				if (singleCounter == 0) {
-					checkCounter++;
-				}
-				if (checkCounter == 2) {
-					singleSolved = true;
-				}
-			}
-			//fillUnique();
-			checkUnique++;
-			quit = true;
+			singleSolve();
+			fillUnique();
+			checkUnique ++;
 			if(checkUnique == 2){
-				quit = false;
+				quit = true;
 			}
 		}
 	}
 
 	public static void main(String[] args){
+		final long startTime = System.nanoTime();
 		SudokuSolver solver = new SudokuSolver();
 		solver.playerInput();
 		solver.displayOriginalGrid();
@@ -549,7 +468,9 @@ public class SudokuSolver{
 		solver.fillPossibleList();
 		solver.solveSudoku();
 		//System.out.println("Unique in row for index 7: " + solver.comparePossiblesinRow(7));
-		//solver.fillUnique();
+		solver.recursiveRemainder();
 		solver.displaySolvingGrid();
+		final long duration = System.nanoTime() - startTime;
+		System.out.print("It took " + (duration / 1000000000) + " seconds.");
 	}
 }
